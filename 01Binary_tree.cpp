@@ -119,17 +119,25 @@ void deleteNode(int val)
 
     if((target->left == NULL) && (target->right == NULL))
     {
-        node* tmp = target->parent;
-        if(tmp->right == target)
+        if(target == root)
         {
-            tmp->right = NULL;
+            root = NULL;
         }
 
-        else if(tmp->left == target)
+        else
         {
-            tmp->left = NULL;
-        }
-        delete (target);    
+            node* tmp = target->parent;
+            if(tmp->right == target)
+            {
+                tmp->right = NULL;
+            }
+
+            else if(tmp->left == target)
+            {
+                tmp->left = NULL;
+            }
+              
+        } delete (target); 
     
     }
 
@@ -137,34 +145,48 @@ void deleteNode(int val)
     {
         if(target->right == NULL)
         {
-            node* tmp = target->parent;
-            if(tmp->right == target)
+            if(target == root)
             {
-                tmp->right = target->left;
-                target->left->parent = tmp; 
+                root = target->left;
             }
-
-            else if(tmp->left == target)
+             else 
             {
-                tmp->left = target->left;
-                target->left->parent = tmp; 
+                node* tmp = target->parent;
+                if(tmp->right == target)
+                {
+                    tmp->right              = target->left;
+                    target->left->parent    = tmp; 
+                }
+
+                else if(tmp->left == target)
+                {
+                    tmp->left               = target->left;
+                    target->left->parent    = tmp; 
+                }
             }
             delete (target);
         }
 
         else if(target->left == NULL)
         {
-            node* tmp = target->parent;
-            if(tmp->right == target)
+            if(target == root)
             {
-                tmp->right = target->right;
-                target->right->parent = tmp; 
+                root = target->right;
             }
-
-            else if(tmp->left == target)
+            else
             {
-                tmp->left = target->right;
-                target->right->parent = tmp; 
+                node* tmp = target->parent;
+                if(tmp->right == target)
+                {
+                    tmp->right                  = target->right;
+                    target->right->parent       = tmp; 
+                }
+
+                else if(tmp->left == target)
+                {
+                    tmp->left = target->right;
+                    target->right->parent = tmp; 
+                }
             }
             delete (target);
         }
@@ -172,15 +194,15 @@ void deleteNode(int val)
     }
     else
     {
-        //cari node pengganti
+        //find replacer node
         node* replacer = target->right;
         while (replacer->left != NULL)
         {
             replacer = replacer->left;
         }
-        // cout<< replacer->value;
+        
 
-        //ganti replacer dangan node kanan
+        //change the replacer to right node
         if (replacer->right != NULL)
         {
             if(replacer->parent->left == replacer)
@@ -204,36 +226,68 @@ void deleteNode(int val)
             }
         }
 
-        // cout<< "test";
-
-        node* tParent = target->parent;
-        // cout<< tParent->value;
-        if(tParent->left == target )
+        if(target == root)
         {
-            tParent->left = replacer;
-            replacer->left = target->left;
-            replacer->right = target->right;
-            replacer->parent = tParent;
-
+            root = replacer;
+            replacer->left  = target->left;
+            replacer->right = target->right; 
         }
-        else if(tParent->right == target )
-        {
-            tParent->right = replacer;
-            replacer->left = target->left;
-            replacer->right = target->right;
-            replacer->parent = tParent;
-        }
-
-        delete(target);
-
-
         
+        else 
+        {
+            node* tParent = target->parent;
+            // cout<< tParent->value;
+            if(tParent->left == target )
+            {
+                tParent->left       = replacer;
+                replacer->left      = target->left;
+                replacer->right     = target->right;
+                replacer->parent    = tParent;
 
-//kalau node nya dua anak
+            }
+            else if(tParent->right == target )
+            {
+                tParent->right = replacer;
+                replacer->left = target->left;
+                replacer->right = target->right;
+                replacer->parent = tParent;
+            }
+        }
+        delete(target);
     }
+}
 
+//in-order traversal 
+void PreOrderTraversal(node* tmp)
+{
+    if(tmp != NULL)
+    {
+        cout << tmp->value <<" - ";
+        PreOrderTraversal(tmp->left);
+        PreOrderTraversal(tmp->right);
+    }
+}
 
+//pre-order traversal
+void InOrderTraversal(node* tmp)
+{
+    if(tmp != NULL)
+    {
+        InOrderTraversal(tmp->left);
+        cout << tmp->value << " - ";
+        InOrderTraversal(tmp->right);
+    }
+}
 
+//post-order traversal 
+void PostOrderTraversal(node* tmp)
+{
+    if(tmp != NULL)
+    {
+        PostOrderTraversal(tmp->left);
+        PostOrderTraversal(tmp->right);
+        cout << tmp->value << " - ";
+    }
 }
 
 
@@ -253,11 +307,18 @@ insert(10);
 printGraph(root);
 
 cout<<"-----------------------\n"<<endl;
-// deleteNode();
+deleteNode(4);
 // cout<<"test\n"<<endl;
 printGraph(root);
 
+cout<< "Pre Order Traversal     : "; PreOrderTraversal(root); 
+cout << endl;
+cout<< "In Order Traversal      : "; InOrderTraversal(root);
+cout << endl;
+cout<< "Post Order Traversal    : "; PostOrderTraversal(root);
+cout << endl;
  return 0;
+
 }
 
 
